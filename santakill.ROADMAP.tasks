@@ -1,0 +1,59 @@
+MAIN:
+
+descriptive memory : 
+
+--- ✄ -----------------------
+  
+  a simple civilization-like game to test and use the arcade library.
+
+
+ROADMAP:
+
+
+ ☐ make the character move around (no animation) through the window
+ ☐ add tile background and have the character move around 
+ ☐ tiles around the player reveal only within a vicinity of 2 tiles
+
+
+
+
+
+TODO:
+
+ ✘ get me some sprites  @created(20-02-16 18:39) @cancelled (20-02-23 17:13)
+   ✔ @today  sprite for character @created(20-02-16 18:40) @done (20-02-19 01:02)
+   ☐ @high sprite for tiles 
+ ✘  examples / from ARCADE : @cancelled (20-02-23 18:09)
+   ✔ @today sprite_move_keyboard.py @started(20-02-23 17:12) @done (20-02-23 17:36) @lasted(0:24)
+   ✘ @today sprite_move_keyboard_better.py @cancelled (20-02-23 18:09)
+
+
+ ✔ santakill: face front or back ? @done (20-02-23 20:37)
+   ✔ @high santakill: face left or right @done (20-02-23 20:36)
+     ✔ @today f3arcade example : face left or right @done (20-02-23 20:36)
+ ☐ how to draw background with tiles 
+ ☐ @high how to animate a sprite 
+   ☐ @today check @ f3rarcade : sprite_move_animation.py
+
+ ☐ how to reveal next tiles as character walks 
+
+ ☐ draw a maze with walls 
+   ☐ review f3rarcade maze examples 
+
+
+NOTAS:
+
+LINKS:
+  - https://www.gameart2d.com/santa-claus-free-sprites.html
+  - https://github.com/pvcraven/arcade
+
+
+
+DOUBT:
+
+  - 
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+ ✘ asdasasdasd @cancelled (20-02-16 18:32) @project(descriptive memory )
+ ✔ adsads @done (20-02-16 18:32) @project(descriptive memory )
