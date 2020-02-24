@@ -10,10 +10,9 @@ import arcade
 
 # Constants
 SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 960
+SCREEN_HEIGHT = 1024
 SCREEN_TITLE = "Santa Kill adventure"
-# SPRITE_SCALING = 0.5
-CHARACTER_SCALING = 0.75
+SPRITE_SCALING = 0.5
 
 
 MOVEMENT_SPEED = 5
@@ -23,83 +22,66 @@ TEXTURE_LEFT = 1
 TEXTURE_UP = 2
 TEXTURE_DOWN = 3
 
-# Constants used to track if the player is facing left or right
-RIGHT_FACING = 0
-LEFT_FACING = 1
-
-# 
-UPDATES_PER_FRAME=7
 
 
 
-def load_texture_pair(filename):
-    """
-    Load a texture pair, with the second being a mirror image.
-    """
-    return [
-        arcade.load_texture(filename),
-        arcade.load_texture(filename, mirrored=True)
-    ]
+class Player(arcade.Sprite):
 
-
-
-
-class PlayerCharacter(arcade.Sprite):
     def __init__(self):
-
-        # Set up parent class
         super().__init__()
 
-        # Default to face-right
-        self.character_face_direction = RIGHT_FACING
+        self.textures = []
+        # Load a left facing texture and a right facing texture.
+        # mirrored=True will mirror the image we load.
 
-        # Used for flipping between image sequences
-        self.cur_texture = 0
+        # define texture facing RIGHT ---
+        texture = arcade.load_texture("images/robot/robot_walk0.png")
+        self.textures.append(texture)
+        # define texture facing LEFT ----
+        texture = arcade.load_texture("images/robot/robot_walk0.png", mirrored=True)
+        self.textures.append(texture)
 
-        # Track out state -------------
-        self.jumping = False
-        self.climbing = False
-        self.is_on_ladder = False
-        self.scale = CHARACTER_SCALING
 
-        # Adjust the collision box. Default includes too much empty space
-        # side-to-side. Box is centered at sprite center, (0, 0)
-        self.points = [[-22, -64], [22, -64], [22, 28], [-22, 28]]
+        # define texture for up -------
+        texture = arcade.load_texture("images/robot/robot_climb0.png")
+        self.textures.append(texture)
+        # define texture for down  ----
+        texture = arcade.load_texture("images/robot/robot_walk0.png")
+        self.textures.append(texture)
 
-        # --- Load Textures ---
 
-        # Images from Kenney.nl's Asset Pack 3
-        main_path = "images/robot/robot"
 
-        # Load textures for idle standing
-        self.idle_texture_pair = load_texture_pair(f"{main_path}_idle.png")
 
-        # Load textures for walking into a list 
-        # this list is then used to be iterated through and hence make their textures available
-        # 
-        self.walk_textures = []
-        for i in range(8):
-            texture = load_texture_pair(f"{main_path}_walk{i}.png")
-            self.walk_textures.append(texture)
+        self.scale = SPRITE_SCALING
 
-    def update_animation(self, delta_time: float = 1/60):
+        # By default, face right.
+        self.set_texture(TEXTURE_RIGHT)
 
-        # Figure out if we need to flip face left or right
-        if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
-            self.character_face_direction = LEFT_FACING
-        elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
-            self.character_face_direction = RIGHT_FACING
+    def update(self):
+        self.center_x += self.change_x
+        self.center_y += self.change_y
 
-        # Idle animation
-        if self.change_x == 0 and self.change_y == 0:
-            self.texture = self.idle_texture_pair[self.character_face_direction]
-            return
+        # Figure out if we should face left or right
+        if self.change_x < 0:
+            self.texture = self.textures[TEXTURE_LEFT]
+        elif self.change_x > 0:
+            self.texture = self.textures[TEXTURE_RIGHT]
 
-        # Walking animation
-        self.cur_texture += 1
-        if self.cur_texture > 7 * UPDATES_PER_FRAME:
-            self.cur_texture = 0
-        self.texture = self.walk_textures[self.cur_texture // UPDATES_PER_FRAME][self.character_face_direction]
+        # Figure out if we should face left or right
+        if self.change_y < 0:
+            self.texture = self.textures[TEXTURE_DOWN]
+        elif self.change_y > 0:
+            self.texture = self.textures[TEXTURE_UP]
+
+        if self.left < 0:
+            self.left = 0
+        elif self.right > SCREEN_WIDTH - 1:
+            self.right = SCREEN_WIDTH - 1
+
+        if self.bottom < 0:
+            self.bottom = 0
+        elif self.top > SCREEN_HEIGHT - 1:
+            self.top = SCREEN_HEIGHT - 1
 
 
 class Santakill(arcade.Window):
@@ -113,30 +95,25 @@ class Santakill(arcade.Window):
 		"""
 		super().__init__(width, height, title)
 		# Set up the empty sprite lists
-		self.player_list = None
-		self.coin_list = None
+		self.enemies_list = arcade.SpriteList()
+		self.all_sprites = arcade.SpriteList()
 
-		# Set up the player
-		self.score = 0
-		self.player = None
 
 
 	def setup(self):
 		"""
 			Get the game ready to play
 		"""
+		# Set the background color
+		# Set up the player
 
 		# Set up the player
-		self.player_list = arcade.SpriteList()
-		self.player=PlayerCharacter()
-
-		#  add the player sprite to the list of sprites related with the player 
-		#  -------
-		self.player_list.append(self.player)
-
+		self.player_sprite = Player()
+		self.player_sprite.center_y = self.height / 2
+		self.player_sprite.left = 10
+		self.all_sprites.append(self.player_sprite)
 		# Unpause everything and reset the collision timer
 		self.paused = False
-
 
 
 	def on_key_press(self, symbol, modifiers):
@@ -158,17 +135,16 @@ class Santakill(arcade.Window):
 	        self.paused = not self.paused
 
 	    if symbol == arcade.key.UP:
-	    	print("clicking up")
-	    	self.player.change_y = 5
+	        self.player_sprite.change_y = 5
 
 	    if symbol == arcade.key.DOWN:
-	        self.player.change_y = -5
+	        self.player_sprite.change_y = -5
 
 	    if symbol == arcade.key.LEFT:
-	        self.player.change_x = -5
+	        self.player_sprite.change_x = -5
 
 	    if symbol == arcade.key.RIGHT:
-	        self.player.change_x = 5
+	        self.player_sprite.change_x = 5
 
 	def on_key_release(self, symbol: int, modifiers: int):
 	    """Undo movement vectors when movement keys are released
@@ -181,13 +157,13 @@ class Santakill(arcade.Window):
 	        symbol == arcade.key.UP
 	        or symbol == arcade.key.DOWN
 	    ):
-	        self.player.change_y = 0
+	        self.player_sprite.change_y = 0
 
 	    if (
 			symbol == arcade.key.LEFT
 	        or symbol == arcade.key.RIGHT
 	    ):
-	        self.player.change_x = 0
+	        self.player_sprite.change_x = 0
 
 	def on_update(self, delta_time: float):
 		"""Update the positions and statuses of all game objects
@@ -202,19 +178,18 @@ class Santakill(arcade.Window):
 
 
 		# Update everything
-		self.player_list.update()
-		self.player_list.update_animation()
+		self.all_sprites.update()
 
 
 		# Keep the player on screen
-		if self.player.top > self.height:
-			self.player.top = self.height
-		if self.player.right > self.width:
-			self.player.right = self.width
-		if self.player.bottom < 0:
-			self.player.bottom = 0
-		if self.player.left < 0:
-			self.player.left = 0
+		if self.player_sprite.top > self.height:
+			self.player_sprite.top = self.height
+		if self.player_sprite.right > self.width:
+			self.player_sprite.right = self.width
+		if self.player_sprite.bottom < 0:
+			self.player_sprite.bottom = 0
+		if self.player_sprite.left < 0:
+			self.player_sprite.left = 0
 
 	def on_draw(self):
 		"""
@@ -224,7 +199,7 @@ class Santakill(arcade.Window):
 
 
 		# -----------------------------
-		self.player_list.draw()
+		self.all_sprites.draw()
 
 
 ## 
