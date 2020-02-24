@@ -5,6 +5,7 @@
 # Imports =========================================
 import arcade
 # import random
+import sys
 
 
 
@@ -14,6 +15,13 @@ SCREEN_HEIGHT = 960
 SCREEN_TITLE = "Santa Kill adventure"
 # SPRITE_SCALING = 0.5
 CHARACTER_SCALING = 0.75
+
+
+SPRITE_SCALING = 0.5
+SPRITE_NATIVE_SIZE = 128
+SPRITE_SIZE = int(SPRITE_NATIVE_SIZE * SPRITE_SCALING)
+
+
 
 
 MOVEMENT_SPEED = 5
@@ -29,6 +37,67 @@ LEFT_FACING = 1
 
 # 
 UPDATES_PER_FRAME=7
+
+
+class Room:
+    """
+    This class holds all the information about the
+    different rooms.
+    """
+    def __init__(self):
+        # You may want many lists. Lists for coins, monsters, etc.
+        self.wall_list = None
+
+        # This holds the background images. If you don't want changing
+        # background images, you can delete this part.
+        self.background = None
+
+
+def setup_room_1():
+    """
+    Create and return room 1.
+    If your program gets large, you may want to separate this into different
+    files.
+    """
+    room = Room()
+
+    """ Set up the game and initialize the variables. """
+    # Sprite lists
+    room.wall_list = arcade.SpriteList()
+
+    # -- Set up the walls
+    # Create bottom and top row of boxes
+    # This y loops a list of two, the coordinate 0, and just under the top of window
+    for y in (0, SCREEN_HEIGHT - SPRITE_SIZE):
+        # Loop for each box going across
+        for x in range(0, SCREEN_WIDTH, SPRITE_SIZE):
+            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
+            wall.left = x
+            wall.bottom = y
+            room.wall_list.append(wall)
+
+    # Create left and right column of boxes
+    for x in (0, SCREEN_WIDTH - SPRITE_SIZE):
+        # Loop for each box going across
+        for y in range(SPRITE_SIZE, SCREEN_HEIGHT - SPRITE_SIZE, SPRITE_SIZE):
+            # Skip making a block 4 and 5 blocks up on the right side
+            if (y != SPRITE_SIZE * 4 and y != SPRITE_SIZE * 5) or x == 0:
+                wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
+                wall.left = x
+                wall.bottom = y
+                room.wall_list.append(wall)
+
+    wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
+    wall.left = 7 * SPRITE_SIZE
+    wall.bottom = 5 * SPRITE_SIZE
+    room.wall_list.append(wall)
+
+    # If you want coins or monsters in a level, then add that code here.
+
+    # Load the background image for this level.
+    room.background = arcade.load_texture(":resources:images/backgrounds/abstract_1.jpg")
+
+    return room
 
 
 
@@ -120,6 +189,12 @@ class Santakill(arcade.Window):
 		self.score = 0
 		self.player = None
 
+		# Sprite lists
+		self.current_room = 0
+
+		# -- 
+		arcade.set_background_color(arcade.color.AMAZON)
+
 
 	def setup(self):
 		"""
@@ -133,6 +208,25 @@ class Santakill(arcade.Window):
 		#  add the player sprite to the list of sprites related with the player 
 		#  -------
 		self.player_list.append(self.player)
+
+
+
+		# Our list of rooms
+		self.rooms = []
+
+        # Create the rooms. Extend the pattern for each room.
+		room = setup_room_1()
+		self.rooms.append(room)
+
+
+		# TODO: 
+		# place player in its initial position
+		# where to put it -----------------
+		# define player's attributes ------
+
+
+		# Create a physics engine for this room
+		self.physics_engine = arcade.PhysicsEngineSimple(self.player, self.rooms[self.current_room].wall_list)
 
 		# Unpause everything and reset the collision timer
 		self.paused = False
@@ -199,7 +293,9 @@ class Santakill(arcade.Window):
 		if self.paused:
 			return
 
-
+		# Call update on all sprites (The sprites don't do much in this
+        # example though.)
+		self.physics_engine.update()
 
 		# Update everything
 		self.player_list.update()
@@ -221,6 +317,12 @@ class Santakill(arcade.Window):
 		Draw all game objects
 		"""
 		arcade.start_render()
+
+
+		# import pdb; pdb.set_trace()
+
+		# Draw all the walls in this room -------------
+		self.rooms[self.current_room].wall_list.draw()
 
 
 		# -----------------------------

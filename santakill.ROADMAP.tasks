@@ -31,9 +31,10 @@ TODO:
  ✔ santakill: face front or back ? @done (20-02-23 20:37)
    ✔ @high santakill: face left or right @done (20-02-23 20:36)
      ✔ @today f3arcade example : face left or right @done (20-02-23 20:36)
- ☐ how to draw background with tiles 
- ☐ @high how to animate a sprite 
-   ☐ @today check @ f3rarcade : sprite_move_animation.py
+ ☐ @today how to draw background with tiles
+    ☐ example maze @f3rarcade
+ ✔ @high how to animate a sprite @done (20-02-24 00:51)
+   ✔ @today check @ f3rarcade : sprite_move_animation.py @done (20-02-24 00:51)
 
  ☐ how to reveal next tiles as character walks 
 
