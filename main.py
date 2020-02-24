@@ -193,7 +193,7 @@ class Santakill(arcade.Window):
 		self.current_room = 0
 
 		# -- 
-		arcade.set_background_color(arcade.color.AMAZON)
+		arcade.set_background_color(arcade.color.BLACK)
 
 
 	def setup(self):
@@ -252,7 +252,6 @@ class Santakill(arcade.Window):
 	        self.paused = not self.paused
 
 	    if symbol == arcade.key.UP:
-	    	print("clicking up")
 	    	self.player.change_y = 5
 
 	    if symbol == arcade.key.DOWN:

@@ -41,8 +41,11 @@ TODO:
  ☐ draw a maze with walls 
    ☐ review f3rarcade maze examples 
 
+ ☐ animate hit movement of character 
+   ☐ check JuiceFX to animate hit movement.
 
 NOTAS:
+
 
 LINKS:
   - https://www.gameart2d.com/santa-claus-free-sprites.html
