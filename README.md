@@ -1,2 +1,0 @@
-# santakill
-game test
